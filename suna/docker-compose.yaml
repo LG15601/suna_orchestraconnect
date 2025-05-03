@@ -1,0 +1,51 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --save 60 1 --loglevel warning
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./backend/.env:/app/.env:ro
+    environment:
+      - ENV_MODE=local
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - REDIS_SSL=False
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./frontend/.env.local:/app/.env.local:ro
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=https://frcrxgzcuiitijbezofx.supabase.co
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZyY3J4Z3pjdWlpdGlqYmV6b2Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyNjA1NDcsImV4cCI6MjA2MTgzNjU0N30.km55JOdacCw8z6AW0XOFmcnUTXXnygoEqr8P_WfIYuY
+      - NEXT_PUBLIC_BACKEND_URL=http://localhost:8001/api
+    command: ["npm", "run", "start"]
+    depends_on:
+      - backend
+
+volumes:
+  redis-data:
