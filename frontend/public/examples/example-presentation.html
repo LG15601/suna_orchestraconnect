@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exemple de présentation avec Reveal.js</title>
+  
+  <!-- Reveal.js CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/black.css">
+  
+  <!-- Custom styles -->
+  <style>
+    .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+      text-transform: none;
+    }
+    .reveal pre {
+      box-shadow: none;
+    }
+    .reveal img {
+      max-height: 65vh;
+      max-width: 100%;
+    }
+    .reveal .slide-number {
+      font-size: 14px;
+    }
+    .reveal .slides {
+      text-align: left;
+    }
+    .reveal .slides section {
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <!-- Title slide -->
+      <section>
+        <h1>Exemple de présentation avec Reveal.js</h1>
+        <p>Intégration avec SUNA Orchestra</p>
+      </section>
+
+      <!-- Introduction slide -->
+      <section>
+        <h2>Introduction</h2>
+        <p>Reveal.js est une bibliothèque JavaScript pour créer des présentations HTML interactives.</p>
+        <ul>
+          <li>Présentations modernes et élégantes</li>
+          <li>Entièrement basé sur des standards web</li>
+          <li>Fonctionne dans tous les navigateurs modernes</li>
+          <li>Complètement gratuit et open-source</li>
+        </ul>
+      </section>
+
+      <!-- Features slide -->
+      <section>
+        <h2>Fonctionnalités</h2>
+        <ul>
+          <li>Navigation intuitive (clavier, souris, tactile)</li>
+          <li>Thèmes personnalisables</li>
+          <li>Transitions entre diapositives</li>
+          <li>Fragments pour révéler progressivement le contenu</li>
+          <li>Support du Markdown</li>
+          <li>Mode présentateur avec notes</li>
+        </ul>
+      </section>
+
+      <!-- Code example slide -->
+      <section>
+        <h2>Exemple de code</h2>
+        <pre><code class="javascript">// Exemple de code JavaScript
+function createPresentation(title, slides) {
+  return {
+    title,
+    slides,
+    present: function() {
+      console.log(`Présentation: ${this.title}`);
+      this.slides.forEach((slide, index) => {
+        console.log(`Diapositive ${index + 1}: ${slide.title}`);
+      });
+    }
+  };
+}</code></pre>
+      </section>
+
+      <!-- Markdown slide -->
+      <section data-markdown>
+        <textarea data-template>
+## Slide avec Markdown
+
+Vous pouvez utiliser **Markdown** pour créer des diapositives.
+
+- Point 1
+- Point 2
+- Point 3
+
+```javascript
+// Exemple de code dans Markdown
+const hello = "world";
+console.log(hello);
+```
+        </textarea>
+      </section>
+
+      <!-- Image slide -->
+      <section>
+        <h2>Intégration d'images</h2>
+        <img src="https://source.unsplash.com/random/800x600/?presentation" alt="Image aléatoire">
+        <p>Les images peuvent être facilement intégrées</p>
+      </section>
+
+      <!-- Vertical slides -->
+      <section>
+        <section>
+          <h2>Diapositives verticales</h2>
+          <p>Appuyez sur la flèche du bas pour voir les sous-diapositives</p>
+        </section>
+        <section>
+          <h3>Sous-diapositive 1</h3>
+          <p>Vous pouvez organiser votre contenu hiérarchiquement</p>
+        </section>
+        <section>
+          <h3>Sous-diapositive 2</h3>
+          <p>Cela permet de créer des présentations plus structurées</p>
+        </section>
+      </section>
+
+      <!-- Conclusion slide -->
+      <section>
+        <h2>Conclusion</h2>
+        <p>Reveal.js est maintenant intégré à SUNA Orchestra !</p>
+        <ul>
+          <li>Création facile de présentations</li>
+          <li>Affichage directement dans l'interface</li>
+          <li>Aucune dépendance supplémentaire requise</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <!-- Reveal.js JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/zoom/zoom.js"></script>
+
+  <!-- Initialize Reveal.js -->
+  <script>
+    Reveal.initialize({
+      // Presentation options
+      controls: true,
+      progress: true,
+      center: true,
+      hash: true,
+      slideNumber: true,
+      transition: 'slide',
+      
+      // Plugins
+      plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealZoom ]
+    });
+
+    // Listen for postMessage API
+    window.addEventListener('message', function(event) {
+      if (event.data === 'next') {
+        Reveal.next();
+      } else if (event.data === 'prev') {
+        Reveal.prev();
+      }
+    });
+  </script>
+</body>
+</html>

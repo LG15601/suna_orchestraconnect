@@ -3,7 +3,8 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export function CompanyShowcase() {
-  const { companyShowcase } = siteConfig;
+  // Temporary mock data since companyShowcase is not defined in siteConfig
+  const companyShowcase = { title: "Ils nous font confiance", companyLogos: [] };
   return (
     <section
       id="company"
@@ -13,6 +14,7 @@ export function CompanyShowcase() {
         Trusted by fast-growing startups
       </p>
       <div className="grid w-full max-w-7xl grid-cols-2 md:grid-cols-4 overflow-hidden border-y border-border items-center justify-center z-20">
+        {/* Commented out to fix build error
         {companyShowcase.companyLogos.map((logo) => (
           <Link
             href="#"
@@ -29,6 +31,10 @@ export function CompanyShowcase() {
             </div>
           </Link>
         ))}
+        */}
+        <div className="p-8 text-center col-span-4">
+          Bientôt disponible
+        </div>
       </div>
     </section>
   );

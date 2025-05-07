@@ -35,12 +35,13 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3003:3000"
+      - "3002:3002"
     volumes:
       - ./frontend/.env.local:/app/.env.local:ro
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_BACKEND_URL=http://localhost:8002/api
+      - PORT=3002
     command: ["npm", "run", "start"]
     depends_on:
       - backend

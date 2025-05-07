@@ -104,7 +104,7 @@ function PricingTabs({ activeTab, setActiveTab, className }: PricingTabsProps) {
               activeTab === tab ? "text-primary" : "text-muted-foreground",
             )}
           >
-            {tab === "cloud" ? "Cloud" : "Self-hosted"}
+            {tab === "cloud" ? "Cloud" : "Auto-hébergé"}
           </span>
         </button>
       ))}
@@ -318,7 +318,7 @@ function PricingTier({
   );
   const isPlanLoading = isLoading[tierPriceId];
 
-  let buttonText = isAuthenticated ? "Select Plan" : "Hire Orchestra Connect";
+  let buttonText = isAuthenticated ? "Sélectionner" : "Essayer Orchestra Connect";
   let buttonDisabled = isPlanLoading;
   let buttonVariant: ButtonVariant = null;
   let ringClass = "";
@@ -327,35 +327,35 @@ function PricingTier({
 
   if (isAuthenticated) {
     if (isCurrentActivePlan) {
-      buttonText = "Current Plan";
+      buttonText = "Forfait actuel";
       buttonDisabled = true;
       buttonVariant = "secondary";
       ringClass = isCompact ? "ring-1 ring-primary" : "ring-2 ring-primary";
       buttonClassName = "bg-primary/5 hover:bg-primary/10 text-primary";
       statusBadge = (
         <span className="bg-primary/10 text-primary text-[10px] font-medium px-1.5 py-0.5 rounded-full">
-          Current
+          Actuel
         </span>
       );
     } else if (isScheduledTargetPlan) {
-      buttonText = "Scheduled";
+      buttonText = "Programmé";
       buttonDisabled = true;
       buttonVariant = "outline";
       ringClass = isCompact ? "ring-1 ring-yellow-500" : "ring-2 ring-yellow-500";
       buttonClassName = "bg-yellow-500/5 hover:bg-yellow-500/10 text-yellow-600 border-yellow-500/20";
       statusBadge = (
         <span className="bg-yellow-500/10 text-yellow-600 text-[10px] font-medium px-1.5 py-0.5 rounded-full">
-          Scheduled
+          Programmé
         </span>
       );
     } else if (isScheduled && currentSubscription?.price_id === tierPriceId) {
-      buttonText = "Change Scheduled";
+      buttonText = "Modifier programmation";
       buttonVariant = "secondary";
       ringClass = isCompact ? "ring-1 ring-primary" : "ring-2 ring-primary";
       buttonClassName = "bg-primary/5 hover:bg-primary/10 text-primary";
       statusBadge = (
         <span className="bg-yellow-500/10 text-yellow-600 text-[10px] font-medium px-1.5 py-0.5 rounded-full">
-          Downgrade Pending
+          Changement en attente
         </span>
       );
     } else {
@@ -383,13 +383,13 @@ function PricingTier({
       const targetAmount = selectedPriceString === '$0' ? 0 : parseFloat(selectedPriceString.replace(/[^\d.]/g, '') || '0') * 100;
 
       if (currentAmount === 0 && targetAmount === 0 && currentSubscription?.status !== 'no_subscription') {
-        buttonText = "Select Plan";
+        buttonText = "Sélectionner";
         buttonDisabled = true;
         buttonVariant = "secondary";
         buttonClassName = "bg-primary/5 hover:bg-primary/10 text-primary";
       } else {
         if (targetAmount > currentAmount) {
-          buttonText = "Upgrade";
+          buttonText = "Passer au forfait";
           buttonVariant = tier.buttonColor as ButtonVariant;
           buttonClassName = "bg-primary hover:bg-primary/90 text-primary-foreground";
         } else if (targetAmount < currentAmount) {
@@ -398,7 +398,7 @@ function PricingTier({
           buttonVariant = "secondary";
           buttonClassName = "opacity-50 cursor-not-allowed bg-muted text-muted-foreground";
         } else {
-          buttonText = "Select Plan";
+          buttonText = "Sélectionner";
           buttonVariant = tier.buttonColor as ButtonVariant;
           buttonClassName = "bg-primary hover:bg-primary/90 text-primary-foreground";
         }
@@ -406,7 +406,7 @@ function PricingTier({
     }
 
     if (isPlanLoading) {
-      buttonText = "Loading...";
+      buttonText = "Chargement...";
       buttonClassName = "opacity-70 cursor-not-allowed";
     }
   } else {
@@ -431,8 +431,8 @@ function PricingTier({
         <p className="text-sm flex items-center gap-2">
           {tier.name}
           {tier.isPopular && (
-            <span className="bg-gradient-to-b from-secondary/50 from-[1.92%] to-secondary to-[100%] text-white h-6 inline-flex w-fit items-center justify-center px-2 rounded-full text-sm shadow-[0px_6px_6px_-3px_rgba(0,0,0,0.08),0px_3px_3px_-1.5px_rgba(0,0,0,0.08),0px_1px_1px_-0.5px_rgba(0,0,0,0.08),0px_0px_0px_1px_rgba(255,255,255,0.12)_inset,0px_1px_0px_0px_rgba(255,255,255,0.12)_inset]">
-              Popular
+            <span className="bg-gradient-to-b from-primary/50 from-[1.92%] to-primary to-[100%] text-white h-6 inline-flex w-fit items-center justify-center px-2 rounded-full text-sm shadow-[0px_6px_6px_-3px_rgba(0,0,0,0.08),0px_3px_3px_-1.5px_rgba(0,0,0,0.08),0px_1px_1px_-0.5px_rgba(0,0,0,0.08),0px_0px_0px_1px_rgba(255,255,255,0.12)_inset,0px_1px_0px_0px_rgba(255,255,255,0.12)_inset]">
+              Populaire
             </span>
           )}
           {isAuthenticated && statusBadge}
@@ -451,13 +451,13 @@ function PricingTier({
 
         {tier.name === "Custom" && tier.upgradePlans ? (
           <div className="w-full space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">Customize your monthly usage</p>
+            <p className="text-xs font-medium text-muted-foreground">Personnalisez votre utilisation mensuelle</p>
             <Select
               value={localSelectedPlan}
               onValueChange={handlePlanSelect}
             >
               <SelectTrigger className="w-full bg-white dark:bg-background">
-                <SelectValue placeholder="Select a plan" />
+                <SelectValue placeholder="Choisir un forfait" />
               </SelectTrigger>
               <SelectContent>
                 {tier.upgradePlans.map((plan) => (
@@ -601,10 +601,10 @@ export function PricingSection({
         <>
           <SectionHeader>
             <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
-              Choose the right plan for your needs
+              Choisissez le forfait adapté à vos besoins
             </h2>
             <p className="text-muted-foreground text-center text-balance font-medium">
-              Start with our free plan or upgrade to a premium plan for more usage hours
+              Commencez avec notre forfait gratuit ou optez pour un forfait premium pour plus d'heures de conciergerie
             </p>
           </SectionHeader>
           <div className="relative w-full h-full">

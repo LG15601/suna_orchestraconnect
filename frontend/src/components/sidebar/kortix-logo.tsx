@@ -15,10 +15,27 @@ export function KortixLogo() {
 
   return (
     <div className="flex items-center justify-center flex-shrink-0">
-      <div className="flex items-center">
-        <span className="text-foreground font-semibold">Orchestra</span>
-        <span className="text-primary font-semibold">Connect</span>
-      </div>
+      {mounted && (
+        <div className="flex items-center">
+          {theme === 'dark' ? (
+            <Image
+              src="/logo-orchestra-white.jpeg"
+              alt="Orchestra Connect Logo"
+              width={100}
+              height={35}
+              className="h-7 w-auto"
+            />
+          ) : (
+            <Image
+              src="/logo-orchestra.jpeg"
+              alt="Orchestra Connect Logo"
+              width={100}
+              height={35}
+              className="h-7 w-auto"
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

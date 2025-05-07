@@ -123,7 +123,7 @@ class Configuration:
     AWS_REGION_NAME: Optional[str] = None
 
     # Model configuration
-    MODEL_TO_USE: Optional[str] = "anthropic/claude-3-7-sonnet-latest"
+    MODEL_TO_USE: Optional[str] = "openrouter/google/gemini-2.5-pro-preview"
 
     # Supabase configuration
     SUPABASE_URL: str
@@ -141,11 +141,22 @@ class Configuration:
     DAYTONA_SERVER_URL: str
     DAYTONA_TARGET: str
 
+    # ACI.dev configuration
+    ACI_API_KEY: Optional[str] = None
+    MCP_ENABLED: bool = False
+    MCP_LINKED_ACCOUNT_OWNER_ID: Optional[str] = None
+
     # Search and other API keys
     TAVILY_API_KEY: str
     RAPID_API_KEY: str
     CLOUDFLARE_API_TOKEN: Optional[str] = None
     FIRECRAWL_API_KEY: str
+
+    # Email configuration
+    RESEND_API_KEY: Optional[str] = None
+    EMAIL_FROM_ADDRESS: str = "alex@orchestraconnect.fr"
+    EMAIL_FROM_NAME: str = "Alex - OrchestraConnect"
+    EMAIL_REPLY_TO: str = "alex@orchestraconnect.fr"
 
     # Stripe configuration
     STRIPE_SECRET_KEY: Optional[str] = None

@@ -1121,7 +1121,7 @@ export default function ThreadPage({ params }: { params: Promise<ThreadParams> }
             <div className="mx-auto max-w-3xl space-y-6">
               {/* User message */}
               <div className="flex justify-end">
-                <div className="max-w-[85%] rounded-lg bg-primary/10 px-4 py-3">
+                <div className="max-w-[85%] rounded-lg bg-primary px-4 py-3">
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-48" />
                     <Skeleton className="h-4 w-32" />
@@ -1159,7 +1159,7 @@ export default function ThreadPage({ params }: { params: Promise<ThreadParams> }
 
               {/* User message */}
               <div className="flex justify-end">
-                <div className="max-w-[85%] rounded-lg bg-primary/10 px-4 py-3">
+                <div className="max-w-[85%] rounded-lg bg-primary px-4 py-3">
                   <Skeleton className="h-4 w-36" />
                 </div>
               </div>
@@ -1266,7 +1266,7 @@ export default function ThreadPage({ params }: { params: Promise<ThreadParams> }
           <div className="mx-auto max-w-3xl">
             {messages.length === 0 && !streamingTextContent && !streamingToolCall && agentStatus === 'idle' ? (
               <div className="flex h-full items-center justify-center">
-                <div className="text-center text-muted-foreground">Send a message to start.</div>
+                <div className="text-center text-muted-foreground">Envoyez un message pour commencer.</div>
               </div>
             ) : (
               <div className="space-y-8">
@@ -1337,10 +1337,10 @@ export default function ThreadPage({ params }: { params: Promise<ThreadParams> }
 
                       return (
                         <div key={group.key} className="flex justify-end">
-                          <div className="inline-flex max-w-[85%] rounded-lg bg-primary/10 px-4 py-3">
+                          <div className="inline-flex max-w-[85%] rounded-lg bg-primary px-4 py-3">
                             <div className="space-y-3">
                               {cleanContent && (
-                                <Markdown className="text-sm prose prose-sm dark:prose-invert chat-markdown max-w-none [&>:first-child]:mt-0 prose-headings:mt-3">{cleanContent}</Markdown>
+                                <Markdown className="text-sm prose prose-sm dark:prose-invert chat-markdown max-w-none [&>:first-child]:mt-0 prose-headings:mt-3 text-white">{cleanContent}</Markdown>
                               )}
 
                               {/* Use the helper function to render user attachments */}
@@ -1354,7 +1354,7 @@ export default function ThreadPage({ params }: { params: Promise<ThreadParams> }
                         <div key={group.key} ref={groupIndex === groupedMessages.length - 1 ? latestMessageRef : null}>
                           <div className="flex items-start gap-3">
                             <div className="flex-shrink-0 w-5 h-5 mt-2 rounded-md flex items-center justify-center overflow-hidden ml-auto mr-2">
-                              <Image src="/kortix-symbol.svg" alt="Kortix" width={14} height={14} className="object-contain invert dark:invert-0 opacity-70" />
+                              <Image src="/logo-orchestra-symbol.png" alt="Orchestra" width={14} height={14} className="object-contain" />
                             </div>
                             <div className="flex-1">
                               <div className="inline-flex max-w-[90%] rounded-lg bg-muted/5 px-4 py-3 text-sm">
@@ -1481,7 +1481,7 @@ export default function ThreadPage({ params }: { params: Promise<ThreadParams> }
                     <div ref={latestMessageRef}>
                       <div className="flex items-start gap-3">
                         <div className="flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center overflow-hidden bg-primary/10">
-                          <Image src="/kortix-symbol.svg" alt="Orchestra Connect" width={14} height={14} className="object-contain"/>
+                          <Image src="/logo-orchestra-symbol.png" alt="Orchestra Connect" width={14} height={14} className="object-contain"/>
                         </div>
                         <div className="flex-1 space-y-2">
                           <div className="max-w-[90%] px-4 py-3 text-sm">
@@ -1516,7 +1516,7 @@ export default function ThreadPage({ params }: { params: Promise<ThreadParams> }
             value={newMessage}
             onChange={setNewMessage}
             onSubmit={handleSubmitMessage}
-            placeholder="Ask Orchestra Connect anything..."
+            placeholder="Demandez à Orchestra..."
             loading={isSending}
             disabled={isSending || agentStatus === 'running' || agentStatus === 'connecting'}
             isAgentRunning={agentStatus === 'running' || agentStatus === 'connecting'}

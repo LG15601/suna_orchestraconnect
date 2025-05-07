@@ -3,6 +3,7 @@
 import { Icons } from "@/components/home/icons";
 import { NavMenu } from "@/components/home/nav-menu";
 import { ThemeToggle } from "@/components/home/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { siteConfig } from "@/lib/home";
 import { cn } from "@/lib/utils";
 import { Menu, X, Github } from "lucide-react";
@@ -119,7 +120,7 @@ export function Navbar() {
           className={cn(
             "mx-auto max-w-7xl rounded-2xl transition-all duration-300  xl:px-0",
             hasScrolled
-              ? "px-2 border border-border/30 backdrop-blur-lg bg-black/90"
+              ? "px-2 border border-border/30 backdrop-blur-lg bg-background/90"
               : "shadow-none px-7",
           )}
         >
@@ -128,8 +129,8 @@ export function Navbar() {
               <Image
                 src={logoSrc}
                 alt="Orchestra Connect Logo"
-                width={140}
-                height={60}
+                width={120}
+                height={50}
                 priority
                 className="rounded-md"
               />
@@ -165,7 +166,10 @@ export function Navbar() {
                   </Link>
                 )}
               </div>
-              <ThemeToggle />
+              <div className="flex items-center gap-2">
+                <LanguageSwitcher />
+                <ThemeToggle />
+              </div>
               <button
                 className="md:hidden border border-border size-8 rounded-md cursor-pointer flex items-center justify-center"
                 onClick={toggleDrawer}
@@ -196,7 +200,7 @@ export function Navbar() {
             />
 
             <motion.div
-              className="fixed inset-x-0 w-[95%] mx-auto bottom-3 bg-black border border-border/30 p-4 rounded-xl shadow-lg"
+              className="fixed inset-x-0 w-[95%] mx-auto bottom-3 bg-background border border-border/30 p-4 rounded-xl shadow-lg"
               initial="hidden"
               animate="visible"
               exit="exit"
@@ -209,8 +213,8 @@ export function Navbar() {
                     <Image
                       src={logoSrc}
                       alt="Orchestra Connect Logo"
-                      width={120}
-                      height={50}
+                      width={100}
+                      height={40}
                       priority
                       className="rounded-md"
                     />
@@ -224,7 +228,7 @@ export function Navbar() {
                 </div>
 
                 <motion.ul
-                  className="flex flex-col text-sm mb-4 border border-border/30 rounded-md bg-black/80"
+                  className="flex flex-col text-sm mb-4 border border-border/30 rounded-md bg-background/80"
                   variants={drawerMenuContainerVariants}
                 >
                   <AnimatePresence>
@@ -274,7 +278,8 @@ export function Navbar() {
                       Hire Orchestra Connect
                     </Link>
                   )}
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
+                    <LanguageSwitcher />
                     <ThemeToggle />
                   </div>
                 </div>

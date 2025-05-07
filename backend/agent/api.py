@@ -15,6 +15,7 @@ from agentpress.thread_manager import ThreadManager
 from services.supabase import DBConnection
 from services import redis
 from agent.run import run_agent
+from utils import config
 from utils.auth_utils import get_current_user_id_from_jwt, get_user_id_from_stream_auth, verify_thread_access
 from utils.logger import logger
 from services.billing import check_billing_status
@@ -34,17 +35,20 @@ MODEL_NAME_ALIASES = {
     "sonnet-3.7": "anthropic/claude-3-7-sonnet-latest",
     "gpt-4.1": "openai/gpt-4.1-2025-04-14",
     "gemini-flash-2.5": "openrouter/google/gemini-2.5-flash-preview",
+    "gemini-pro-2.5": "openrouter/google/gemini-2.5-pro-preview",
     "grok-3": "xai/grok-3-fast-latest",
     "deepseek": "deepseek/deepseek-chat",
     "grok-3-mini": "xai/grok-3-mini-fast-beta",
 }
 
 class AgentStartRequest(BaseModel):
-    model_name: Optional[str] = "sonnet-3.7"
+    model_name: Optional[str] = "gemini-pro-2.5"
     enable_thinking: Optional[bool] = False
     reasoning_effort: Optional[str] = 'low'
     stream: Optional[bool] = True
     enable_context_manager: Optional[bool] = False
+    enable_mcp: Optional[bool] = False
+    mcp_linked_account_owner_id: Optional[str] = None
 
 class InitiateAgentResponse(BaseModel):
     thread_id: str
@@ -402,7 +406,9 @@ async def start_agent(
             project_id=project_id, sandbox=sandbox,
             model_name=MODEL_NAME_ALIASES.get(body.model_name, body.model_name),
             enable_thinking=body.enable_thinking, reasoning_effort=body.reasoning_effort,
-            stream=body.stream, enable_context_manager=body.enable_context_manager
+            stream=body.stream, enable_context_manager=body.enable_context_manager,
+            enable_mcp=False, mcp_linked_account_owner_id=None,
+            mcp_api_key=None
         )
     )
 
@@ -639,7 +645,10 @@ async def run_agent_background(
     enable_thinking: Optional[bool],
     reasoning_effort: Optional[str],
     stream: bool,
-    enable_context_manager: bool
+    enable_context_manager: bool,
+    enable_mcp: bool = False,
+    mcp_linked_account_owner_id: Optional[str] = None,
+    mcp_api_key: Optional[str] = None
 ):
     """Run the agent in the background using Redis for state."""
     logger.debug(f"Starting background agent run: {agent_run_id} for thread: {thread_id} (Instance: {instance_id})")
@@ -853,11 +862,13 @@ async def generate_and_update_project_name(project_id: str, prompt: str):
 @router.post("/agent/initiate", response_model=InitiateAgentResponse)
 async def initiate_agent_with_files(
     prompt: str = Form(...),
-    model_name: Optional[str] = Form("sonnet-3.7"),
+    model_name: Optional[str] = Form("gemini-pro-2.5"),
     enable_thinking: Optional[bool] = Form(False),
     reasoning_effort: Optional[str] = Form("low"),
     stream: Optional[bool] = Form(True),
     enable_context_manager: Optional[bool] = Form(False),
+    enable_mcp: Optional[bool] = Form(False),
+    mcp_linked_account_owner_id: Optional[str] = Form(None),
     files: List[UploadFile] = File(default=[]),
     user_id: str = Depends(get_current_user_id_from_jwt)
 ):
@@ -988,7 +999,9 @@ async def initiate_agent_with_files(
                 project_id=project_id, sandbox=sandbox,
                 model_name=MODEL_NAME_ALIASES.get(model_name, model_name),
                 enable_thinking=enable_thinking, reasoning_effort=reasoning_effort,
-                stream=stream, enable_context_manager=enable_context_manager
+                stream=stream, enable_context_manager=enable_context_manager,
+                enable_mcp=enable_mcp, mcp_linked_account_owner_id=mcp_linked_account_owner_id,
+                mcp_api_key=None
             )
         )
         task.add_done_callback(lambda _: asyncio.create_task(_cleanup_redis_instance_key(agent_run_id)))

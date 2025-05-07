@@ -37,7 +37,7 @@ REDIS_SSL=false
 # LLM Providers - API keys
 ANTHROPIC_API_KEY=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
 OPENAI_API_KEY=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
-MODEL_TO_USE=anthropic/claude-3-7-sonnet-latest
+MODEL_TO_USE=openrouter/google/gemini-2.5-pro-preview
 
 # Sandbox container provider - Daytona
 DAYTONA_API_KEY=dtn_bada987eb670c008b6259ff97f4bcaab5d902ebb610e42a917186a6af0e1594c
@@ -51,6 +51,11 @@ FIRECRAWL_API_KEY=fc-60fe43022991488e9f9d030a4d075b8b
 
 # Application name
 APP_NAME=OrchestraConnect
+
+# ACI.dev configuration (pour MCP Unified Server)
+ACI_API_KEY=
+MCP_ENABLED=false
+MCP_LINKED_ACCOUNT_OWNER_ID=
 ```
 
 ### Frontend (.env.local)
@@ -85,10 +90,18 @@ Une base de données Supabase a été créée pour OrchestraConnect avec les inf
 
 ## Configuration du modèle IA
 
-Le projet utilise Claude 3.7 Sonnet comme modèle principal :
-- Fournisseur : Anthropic
-- Modèle : claude-3-7-sonnet-latest
-- Clé API : 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
+Le projet utilise désormais Gemini 2.5 Pro comme modèle principal (mise à jour du 2023-11-05) :
+- Fournisseur : Google via OpenRouter
+- Modèle : openrouter/google/gemini-2.5-pro-preview
+- Clé API : Utilisation de la clé OpenRouter existante
+
+Modèles alternatifs disponibles :
+- Claude 3.7 Sonnet (Anthropic)
+- GPT-4.1 (OpenAI)
+- Gemini 2.5 Flash (Google via OpenRouter)
+- Grok-3 (xAI)
+- DeepSeek Chat (DeepSeek)
+- Grok-3-mini (xAI)
 
 ## Configuration de Daytona
 
@@ -117,7 +130,108 @@ Le fichier .env du backend spécifie `REDIS_PORT=6380`, mais dans le docker-comp
 
 ### Problème avec les quotas Daytona
 
-Des problèmes de quotas Daytona ont été rencontrés, ce qui a nécessité la suppression de certains espaces de travail Daytona.
+Des problèmes de quotas Daytona ont été rencontrés, ce qui a nécessité la suppression de certains espaces de travail Daytona. L'erreur suivante peut apparaître :
+
+```
+Error: [API] Error starting agent: 500 Internal Server Error "{\"detail\":\"Failed to initialize sandbox: Failed to create sandbox: Workspace quota exceeded. Maximum allowed: 10\"}"
+```
+
+Solutions :
+1. Supprimer les sandboxes inutilisés via le script `backend/utils/scripts/delete_user_sandboxes.py`
+2. Archiver les sandboxes inactifs via le script `backend/utils/scripts/archive_inactive_sandboxes.py`
+3. Passer à un plan Daytona supérieur avec une limite de workspaces plus élevée
+
+### Problème avec la structure des fichiers dupliqués
+
+Nous avons rencontré des problèmes avec la structure des fichiers dupliqués entre `frontend/src/app/` et `frontend/app/`. La suppression de fichiers dupliqués a causé des erreurs "Account not found" et des problèmes de navigation.
+
+Solution :
+- Restaurer les fichiers supprimés
+- Nettoyer le cache de build avec `rm -rf .next`
+- Redémarrer le serveur de développement
+
+## Intégration du serveur MCP Unified (ACI.dev)
+
+Le 2023-11-05, nous avons ajouté la prise en charge du serveur MCP Unified d'ACI.dev pour étendre les capacités de l'agent. Cette intégration permet à l'agent d'accéder à des outils et fonctions externes via le protocole MCP.
+
+### Modifications apportées
+
+1. **Création d'un nouvel outil MCP Unified** :
+   - Fichier : `backend/agent/tools/mcp_unified_tool.py`
+   - Fonctionnalités : Recherche et exécution de fonctions ACI.dev
+
+2. **Ajout des variables de configuration** :
+   - Fichier : `backend/utils/config.py`
+   - Variables ajoutées :
+     ```python
+     ACI_API_KEY: Optional[str] = None
+     MCP_ENABLED: bool = False
+     MCP_LINKED_ACCOUNT_OWNER_ID: Optional[str] = None
+     ```
+
+3. **Modification du système d'agents** :
+   - Fichier : `backend/agent/run.py`
+   - Ajout de l'outil MCP Unified au gestionnaire de threads
+   - Ajout de paramètres pour activer/désactiver MCP
+
+4. **Modification de l'API** :
+   - Fichier : `backend/agent/api.py`
+   - Ajout des paramètres MCP à l'API
+   - Passage des paramètres MCP à la fonction `run_agent_background`
+
+### Configuration requise
+
+Pour activer le serveur MCP Unified, vous devez :
+1. Obtenir une clé API ACI.dev et la configurer dans la variable d'environnement `ACI_API_KEY`
+2. Obtenir un ID de propriétaire de compte lié et le configurer dans la variable d'environnement `MCP_LINKED_ACCOUNT_OWNER_ID`
+3. Définir `MCP_ENABLED=true` dans le fichier `.env`
+
+## Personnalisation de l'agent Alex
+
+### Étapes réalisées
+1. **Sauvegarde du prompt original**
+   ```bash
+   # Création d'une copie de sauvegarde du fichier prompt.py
+   cp backend/agent/prompt.py backend/agent/prompt.py.backup
+   ```
+
+2. **Modification du prompt pour Alex**
+   - Modification du fichier `backend/agent/prompt.py` pour transformer l'agent en "Alex, le concierge virtuel d'OrchestraConnect"
+   - Ajout de sections sur le rôle, l'approche et la personnalité d'Alex
+   - Traduction des sections de communication en français
+   - Ajout d'instructions pour l'adaptation aux profils DISC
+
+3. **Modification du texte d'accueil**
+   - Modification du fichier `frontend/src/app/(dashboard)/dashboard/page.tsx` pour changer le texte d'accueil en "Alex, Votre concierge" et "Demandez-moi et je m'occupe de vos besoins"
+
+4. **Déploiement des modifications dans Docker**
+   ```bash
+   # Localisation du fichier prompt.py dans le conteneur Docker
+   docker exec -it suna_orchestraconnect-backend-1 find /app -name prompt.py
+
+   # Copie du fichier modifié dans le conteneur
+   docker cp backend/agent/prompt.py suna_orchestraconnect-backend-1:/app/agent/prompt.py
+
+   # Redémarrage du conteneur backend
+   docker restart suna_orchestraconnect-backend-1
+   ```
+
+### Erreurs rencontrées
+1. **Problème de chemin dans Docker**
+   - Erreur: Tentative de copie vers `/app/backend/agent/prompt.py` alors que le chemin correct est `/app/agent/prompt.py`
+   - Solution: Utilisation de `find` pour localiser le chemin correct du fichier dans le conteneur
+
+2. **Persistance de l'ancien prompt**
+   - Problème: Malgré la modification du fichier et le redémarrage du conteneur, l'agent continue à se présenter comme Suna
+   - Causes possibles:
+     * Cache du modèle ou problème de chargement du prompt
+     * Le fichier modifié n'est pas correctement importé dans l'application
+     * Le conteneur Docker utilise une version différente du fichier
+   - Solutions potentielles:
+     * Vérifier les logs du conteneur pour voir si le prompt est correctement chargé
+     * Redémarrer complètement les conteneurs Docker (pas seulement le backend)
+     * Modifier directement le fichier dans le conteneur et vérifier son contenu
+     * Reconstruire l'image Docker avec les modifications
 
 ## Apprentissages et bonnes pratiques
 
@@ -130,6 +244,10 @@ Des problèmes de quotas Daytona ont été rencontrés, ce qui a nécessité la 
 4. **Séparation des projets** : Maintenir une séparation claire entre le projet SUNA original (port 3002) et le projet OrchestraConnect (port 3003) pour éviter les conflits.
 
 5. **Personnalisation du design** : Le design peut être personnalisé pour OrchestraConnect tout en respectant la structure du projet SUNA.
+
+6. **Gestion des fichiers dupliqués** : Être prudent lors de la suppression de fichiers qui semblent dupliqués, car ils peuvent avoir des rôles différents dans l'application.
+
+7. **Nettoyage du cache** : Nettoyer le cache de build après des modifications importantes pour s'assurer que les changements sont pris en compte.
 
 ## Étapes pour redéployer l'agent
 
@@ -169,6 +287,52 @@ Des problèmes de quotas Daytona ont été rencontrés, ce qui a nécessité la 
 
 5. **Tests** : Ajouter des tests automatisés pour s'assurer que l'application fonctionne correctement après chaque déploiement.
 
+6. **Gestion des modèles d'IA** : Tester régulièrement les différents modèles d'IA disponibles pour trouver le meilleur équilibre entre performance et coût.
+
+7. **Nettoyage des sandboxes** : Mettre en place un processus automatisé pour nettoyer régulièrement les sandboxes inutilisés.
+
+## Prochaines étapes recommandées
+
+### Priorité 1 : Résoudre le problème du prompt d'Alex
+1. Vérifier le contenu du fichier prompt.py dans le conteneur Docker :
+   ```bash
+   docker exec -it suna_orchestraconnect-backend-1 cat /app/agent/prompt.py | head -20
+   ```
+2. Vérifier les logs du backend pour identifier d'éventuelles erreurs :
+   ```bash
+   docker logs suna_orchestraconnect-backend-1 | grep -i error
+   ```
+3. Tester une modification directe dans le conteneur :
+   ```bash
+   docker exec -it suna_orchestraconnect-backend-1 bash
+   # Dans le conteneur :
+   echo "# Test de modification" >> /app/agent/prompt.py
+   exit
+   # Puis redémarrer :
+   docker restart suna_orchestraconnect-backend-1
+   ```
+
+### Priorité 2 : Standardiser l'environnement
+1. Décider quelle version utiliser (3002 ou 3003) et se concentrer sur celle-ci
+2. Si la version 3002 est préférée, modifier la configuration pour qu'elle utilise le même backend que la version Docker
+3. Si la version 3003 est préférée, arrêter la version 3002 pour éviter la confusion
+
+### Priorité 3 : Modifications visuelles cohérentes
+1. Remplacer les logos Kortix par des logos OrchestraConnect
+2. Mettre à jour les métadonnées et les titres des pages
+3. Adapter les couleurs et le style visuel selon les préférences d'OrchestraConnect
+
+### Priorité 4 : Modifications structurelles (avec précaution)
+1. Renommer les fichiers contenant "kortix" ou "suna" dans leur nom
+2. Mettre à jour les importations correspondantes
+3. Tester après chaque modification
+
+### Priorité 5 : Configuration et test du serveur MCP Unified
+1. Obtenir une clé API ACI.dev
+2. Configurer les variables d'environnement nécessaires
+3. Tester l'intégration avec des cas d'utilisation simples
+4. Documenter les fonctionnalités disponibles via MCP
+
 ## Conclusion
 
-Le déploiement de l'agent OrchestraConnect a été réalisé avec succès en clonant le projet SUNA et en le configurant pour répondre aux besoins spécifiques d'OrchestraConnect. Quelques problèmes ont été rencontrés, notamment avec les clés API et les quotas Daytona, mais ils ont été résolus. Pour les déploiements futurs, il est recommandé d'automatiser le processus et d'ajouter des outils de monitoring et de sauvegarde.
+Le déploiement de l'agent OrchestraConnect a été réalisé avec succès en clonant le projet SUNA et en le configurant pour répondre aux besoins spécifiques d'OrchestraConnect. Plusieurs améliorations ont été apportées, notamment le passage à Gemini 2.5 Pro et l'ajout du support pour le serveur MCP Unified. Des problèmes ont été rencontrés, notamment avec les quotas Daytona et la structure des fichiers dupliqués, mais ils ont été résolus. Pour les déploiements futurs, il est recommandé d'automatiser le processus et d'ajouter des outils de monitoring et de sauvegarde.

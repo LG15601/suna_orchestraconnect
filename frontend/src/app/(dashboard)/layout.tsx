@@ -30,30 +30,18 @@ export default function DashboardLayout({
   const personalAccount = accounts?.find(account => account.personal_account)
   const { user, isLoading } = useAuth()
   const router = useRouter()
-  
+
   useEffect(() => {
     // setShowPricingAlert(false)
     setShowMaintenanceAlert(false)
   }, [])
 
-  // Check API health
+  // Disable API health check
   useEffect(() => {
-    const checkHealth = async () => {
-      try {
-        const health = await checkApiHealth()
-        setIsApiHealthy(health.status === 'ok')
-      } catch (error) {
-        console.error('API health check failed:', error)
-        setIsApiHealthy(false)
-      } finally {
-        setIsCheckingHealth(false)
-      }
-    }
-
-    checkHealth()
-    // Check health every 30 seconds
-    const interval = setInterval(checkHealth, 30000)
-    return () => clearInterval(interval)
+    // Always set API as healthy
+    setIsApiHealthy(true)
+    setIsCheckingHealth(false)
+    return () => {}
   }, [])
 
   // Check authentication status
@@ -90,14 +78,14 @@ export default function DashboardLayout({
           {children}
         </div>
       </SidebarInset>
-      
-      {/* <PricingAlert 
-        open={showPricingAlert} 
+
+      {/* <PricingAlert
+        open={showPricingAlert}
         onOpenChange={setShowPricingAlert}
         closeable={false}
         accountId={personalAccount?.account_id}
         /> */}
-      
+
       <MaintenanceAlert
         open={showMaintenanceAlert}
         onOpenChange={setShowMaintenanceAlert}

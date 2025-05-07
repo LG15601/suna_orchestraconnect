@@ -20,7 +20,7 @@ export function FooterSection() {
   }, []);
 
   const logoSrc = !mounted ? "/logo-orchestra.jpeg" :
-    (resolvedTheme === "dark" ? "/logo-orchestra.jpeg" : "/logo-orchestra-white.jpeg");
+    (resolvedTheme === "dark" ? "/logo-orchestra-white.jpeg" : "/logo-orchestra.jpeg");
 
   return (
     <footer id="footer" className="w-full pb-0">
@@ -30,9 +30,10 @@ export function FooterSection() {
             <Image
               src={logoSrc}
               alt="Orchestra Connect Logo"
-              width={122}
-              height={50}
+              width={100}
+              height={40}
               priority
+              className="rounded-md"
             />
           </Link>
           <p className="tracking-tight text-muted-foreground font-medium">

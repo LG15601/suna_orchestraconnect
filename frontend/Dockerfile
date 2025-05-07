@@ -24,6 +24,9 @@ RUN npm install
 # Copy the frontend code
 COPY . .
 
+# Install additional dependencies that might be missing
+RUN npm install @radix-ui/react-toast class-variance-authority
+
 RUN npm run build
 
 EXPOSE 3000

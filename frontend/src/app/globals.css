@@ -220,7 +220,7 @@
 
 :root {
   /* OrchestraConnect color scheme - Light mode */
-  --background: #FFFFFF; /* White background for light mode */
+  --background: #FFFFFF; /* Clean white background for light mode */
   --foreground: #1A1A1A;
   --card: #F8F9FA;
   --card-foreground: #1A1A1A;
@@ -258,12 +258,12 @@
 }
 
 .dark {
-  /* OrchestraConnect color scheme - Dark mode with deep black background from logo */
-  --background: #000A14; /* Deep black with slight blue tint from logo */
+  /* OrchestraConnect color scheme - Dark mode with deep black background */
+  --background: #000000; /* Deep black background as requested */
   --foreground: #FFFFFF;
-  --card: #001020;
+  --card: #000000;
   --card-foreground: #FFFFFF;
-  --popover: #001020;
+  --popover: #000000;
   --popover-foreground: #FFFFFF;
   /* Primary color - OrchestraConnect green */
   --primary: #00C389;
@@ -271,27 +271,27 @@
   /* Secondary color - OrchestraConnect accent */
   --secondary: #00C389;
   --secondary-foreground: #FFFFFF;
-  --muted: #0A1A2A;
+  --muted: #0D1526;
   --muted-foreground: #A1A1AA;
-  --accent: #0A1A2A;
+  --accent: #0D1526;
   --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
-  --border: #0A1A2A;
-  --input: #0A1A2A;
+  --border: #0D1526;
+  --input: #0D1526;
   --ring: #00C389;
   --chart-1: #00C389;
   --chart-2: #10B981;
   --chart-3: #3B82F6;
   --chart-4: #8B5CF6;
   --chart-5: #EC4899;
-  --sidebar: #000A14;
+  --sidebar: #000000;
   --sidebar-foreground: #FFFFFF;
   --sidebar-primary: #00C389;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #0A1A2A;
+  --sidebar-accent: #0D1526;
   --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: #0A1A2A;
+  --sidebar-border: #0D1526;
   --sidebar-ring: #00C389;
 }
 

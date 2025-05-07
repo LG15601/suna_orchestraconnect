@@ -4,7 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import { Menu } from "lucide-react"
 
-import { NavAgents } from "@/components/sidebar/nav-agents"
+import { NavMissions } from "@/components/sidebar/nav-missions"
 import { NavUserWithTeams } from "@/components/sidebar/nav-user-with-teams"
 import { KortixLogo } from "@/components/sidebar/kortix-logo"
 import { CTACard } from "@/components/sidebar/cta"
@@ -46,7 +46,7 @@ export function SidebarLeft({
     const fetchUserData = async () => {
       const supabase = createClient()
       const { data } = await supabase.auth.getUser()
-      
+
       if (data.user) {
         setUser({
           name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
@@ -67,14 +67,14 @@ export function SidebarLeft({
         // We'll handle this in the parent page component
         // to ensure proper coordination between panels
         setOpen(!state.startsWith('expanded'));
-        
+
         // Broadcast a custom event to notify other components
         window.dispatchEvent(new CustomEvent('sidebar-left-toggled', {
           detail: { expanded: !state.startsWith('expanded') }
         }));
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [state, setOpen]);
@@ -117,7 +117,7 @@ export function SidebarLeft({
         </div>
       </SidebarHeader>
       <SidebarContent className="[&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
-        <NavAgents />
+        <NavMissions />
       </SidebarContent>
       {state !== "collapsed" && (
         <div className="px-3 py-2">
@@ -134,7 +134,7 @@ export function SidebarLeft({
               <TooltipContent>Expand sidebar (CMD+B)</TooltipContent>
             </Tooltip>
           </div>
-        )}        
+        )}
         <NavUserWithTeams user={user} />
       </SidebarFooter>
       <SidebarRail />

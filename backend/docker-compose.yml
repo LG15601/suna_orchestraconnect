@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8001:8000"
     env_file:
       - .env
     volumes:
@@ -31,11 +31,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '14'
-          memory: 48G
-        reservations:
           cpus: '8'
-          memory: 32G
+          memory: 16G
+        reservations:
+          cpus: '4'
+          memory: 8G
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
       interval: 30s
@@ -46,7 +46,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:6381:6379"
     volumes:
       - redis_data:/data
     restart: unless-stopped
@@ -68,10 +68,10 @@ services:
       resources:
         limits:
           cpus: '2'
-          memory: 12G
+          memory: 4G
         reservations:
           cpus: '1'
-          memory: 8G
+          memory: 2G
 
 networks:
   app-network:

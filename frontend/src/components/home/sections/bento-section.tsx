@@ -4,7 +4,10 @@ import { SectionHeader } from "@/components/home/section-header";
 import { siteConfig } from "@/lib/home";
 
 export function BentoSection() {
-  const { title, description, items } = siteConfig.bentoSection;
+  // Temporary mock data since bentoSection is not defined in siteConfig
+  const title = "Nos fonctionnalités";
+  const description = "Découvrez comment Orchestra Connect peut vous aider";
+  const items = [];
 
   return (
     <section

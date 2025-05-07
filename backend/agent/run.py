@@ -19,10 +19,11 @@ from agent.tools.sb_files_tool import SandboxFilesTool
 from agent.tools.sb_browser_tool import SandboxBrowserTool
 from agent.tools.data_providers_tool import DataProvidersTool
 from agent.prompt import get_system_prompt
-from utils import logger
 from utils.auth_utils import get_account_id_from_thread
 from services.billing import check_billing_status
 from agent.tools.sb_vision_tool import SandboxVisionTool
+# from agent.tools.mcp_unified_tool import MCPUnifiedTool  # Module désactivé
+from agent.tools.email_tool import EmailTool
 
 load_dotenv()
 
@@ -33,10 +34,13 @@ async def run_agent(
     thread_manager: Optional[ThreadManager] = None,
     native_max_auto_continues: int = 25,
     max_iterations: int = 150,
-    model_name: str = "anthropic/claude-3-7-sonnet-latest",
+    model_name: str = "openrouter/google/gemini-2.5-pro-preview",
     enable_thinking: Optional[bool] = False,
     reasoning_effort: Optional[str] = 'low',
-    enable_context_manager: bool = True
+    enable_context_manager: bool = True,
+    enable_mcp: bool = False,
+    mcp_linked_account_owner_id: Optional[str] = None,
+    mcp_api_key: Optional[str] = None
 ):
     """Run the development agent with specified configuration."""
 
@@ -72,13 +76,34 @@ async def run_agent(
     try:
         thread_manager.add_tool(WebSearchTool)
     except ValueError as e:
-        logger.warning(f"WebSearchTool could not be initialized: {e}. Continuing without web search capability.")
+        print(f"WebSearchTool could not be initialized: {e}. Continuing without web search capability.")
 
     thread_manager.add_tool(SandboxVisionTool, project_id=project_id, thread_id=thread_id, thread_manager=thread_manager)
 
     # Add data providers tool if RapidAPI key is available
     if config.RAPID_API_KEY:
         thread_manager.add_tool(DataProvidersTool)
+
+    # Add email tool if Resend API key is available
+    try:
+        print(f"Checking for RESEND_API_KEY: hasattr={hasattr(config, 'RESEND_API_KEY')}, value={config.RESEND_API_KEY}")
+        if hasattr(config, 'RESEND_API_KEY') and config.RESEND_API_KEY:
+            thread_manager.add_tool(EmailTool)
+            print("Email tool added successfully")
+        else:
+            print("RESEND_API_KEY not found in configuration. Email tool will not be available.")
+    except Exception as e:
+        print(f"Email tool could not be initialized: {e}. Continuing without email capability.")
+
+    # MCP Unified tool is disabled
+    # if enable_mcp and mcp_linked_account_owner_id:
+    #     try:
+    #         thread_manager.add_tool(MCPUnifiedTool,
+    #                                linked_account_owner_id=mcp_linked_account_owner_id,
+    #                                aci_api_key=mcp_api_key)
+    #         logger.info("MCP Unified tool added successfully")
+    #     except Exception as e:
+    #         logger.warning(f"MCP Unified tool could not be initialized: {e}. Continuing without MCP capability.")
 
     system_message = { "role": "system", "content": get_system_prompt() }
 
@@ -138,11 +163,11 @@ async def run_agent(
                         }
                     })
                 else:
-                    logger.warning("Browser state found but no screenshot base64 data.")
+                    print("Browser state found but no screenshot base64 data.")
 
                 await client.table('messages').delete().eq('message_id', latest_browser_state_msg.data[0]["message_id"]).execute()
             except Exception as e:
-                logger.error(f"Error parsing browser state: {e}")
+                print(f"Error parsing browser state: {e}")
 
         # Get the latest image_context message (NEW)
         latest_image_context_msg = await client.table('messages').select('*').eq('thread_id', thread_id).eq('type', 'image_context').order('created_at', desc=True).limit(1).execute()
@@ -165,11 +190,11 @@ async def run_agent(
                         }
                     })
                 else:
-                    logger.warning(f"Image context found for '{file_path}' but missing base64 or mime_type.")
+                    print(f"Image context found for '{file_path}' but missing base64 or mime_type.")
 
                 await client.table('messages').delete().eq('message_id', latest_image_context_msg.data[0]["message_id"]).execute()
             except Exception as e:
-                logger.error(f"Error parsing image context: {e}")
+                print(f"Error parsing image context: {e}")
 
         # If we have any content, construct the temporary_message
         if temp_message_content_list:

@@ -29,7 +29,7 @@ const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
 
 // Local storage keys
 const STORAGE_KEY_MODEL = 'orchestra-connect-preferred-model';
-const DEFAULT_MODEL_ID = "sonnet-3.7"; // Define default model ID
+const DEFAULT_MODEL_ID = "gemini-flash-2.5"; // Define default model ID
 
 interface ChatInputProps {
   onSubmit: (message: string, options?: { model_name?: string; enable_thinking?: boolean }) => void;
@@ -60,7 +60,7 @@ export interface ChatInputHandles {
 
 export const ChatInput = forwardRef<ChatInputHandles, ChatInputProps>(({
   onSubmit,
-  placeholder = "Describe what you need help with...",
+  placeholder = "Demandez à Orchestra...",
   loading = false,
   disabled = false,
   isAgentRunning = false,
@@ -79,9 +79,9 @@ export const ChatInput = forwardRef<ChatInputHandles, ChatInputProps>(({
 
   // Define model options array earlier so it can be used in useEffect
   const modelOptions = [
+    { id: "gemini-flash-2.5", label: "Gemini Flash 2.5" },
     { id: "sonnet-3.7", label: "Claude 3.7 Sonnet" },
     { id: "sonnet-3.7-thinking", label: "Claude 3.7 Sonnet (Thinking)" },
-    { id: "gemini-flash-2.5", label: "Gemini Flash 2.5" },
     { id: "gpt-4.1", label: "GPT-4.1" }
   ];
 

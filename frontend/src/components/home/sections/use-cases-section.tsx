@@ -2,9 +2,6 @@
 
 import { SectionHeader } from "@/components/home/section-header";
 import { siteConfig } from "@/lib/home";
-import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
-import { ArrowRight } from "lucide-react";
 
 interface UseCase {
   id: string;
@@ -29,24 +26,24 @@ export function UseCasesSection() {
     >
       <SectionHeader>
         <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
-          See Orchestra Connect in action
+          Nos services de conciergerie B2B
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          Explore real-world examples of how Orchestra Connect completes complex tasks autonomously
+          Découvrez comment Orchestra peut simplifier le quotidien de votre entreprise et optimiser vos ressources
         </p>
       </SectionHeader>
 
       <div className="relative w-full h-full">
-        <div className="grid min-[650px]:grid-cols-2 min-[900px]:grid-cols-3 min-[1200px]:grid-cols-4 gap-4 w-full max-w-6xl mx-auto px-6">
+        <div className="grid min-[650px]:grid-cols-2 min-[900px]:grid-cols-3 min-[1200px]:grid-cols-4 gap-6 w-full max-w-6xl mx-auto px-6">
           {featuredUseCases.map((useCase: UseCase) => (
             <div
               key={useCase.id}
-              className="rounded-xl overflow-hidden relative h-fit min-[650px]:h-full flex flex-col md:shadow-[0px_61px_24px_-10px_rgba(0,0,0,0.01),0px_34px_20px_-8px_rgba(0,0,0,0.05),0px_15px_15px_-6px_rgba(0,0,0,0.09),0px_4px_8px_-2px_rgba(0,0,0,0.10),0px_0px_0px_1px_rgba(0,0,0,0.08)] bg-accent"
+              className="rounded-xl overflow-hidden relative h-fit min-[650px]:h-full flex flex-col md:shadow-[0px_61px_24px_-10px_rgba(0,0,0,0.01),0px_34px_20px_-8px_rgba(0,0,0,0.05),0px_15px_15px_-6px_rgba(0,0,0,0.09),0px_4px_8px_-2px_rgba(0,0,0,0.10),0px_0px_0px_1px_rgba(0,0,0,0.08)] bg-accent hover:shadow-lg transition-shadow duration-300"
             >
               <div className="flex flex-col gap-4 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="rounded-full bg-secondary/10 p-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-secondary">
+                  <div className="rounded-full bg-primary/10 p-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary">
                       {useCase.icon}
                     </svg>
                   </div>
@@ -60,24 +57,20 @@ export function UseCasesSection() {
               <div className="mt-auto">
                 <hr className="border-border dark:border-white/20 m-0" />
 
-                <div className="w-full h-[160px] bg-accent/10">
+                <div className="w-full h-[200px] bg-accent/10">
                   <div className="relative w-full h-full overflow-hidden">
                     <img
                       src={useCase.image || `https://placehold.co/800x400/f5f5f5/666666?text=Orchestra+Connect+${useCase.title.split(' ').join('+')}`}
                       alt={`Orchestra Connect ${useCase.title}`}
                       className="w-full h-full object-cover"
                     />
-                    <a
-                      href={useCase.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end justify-start p-4 group"
+                    <div
+                      className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end justify-start p-4"
                     >
-                      <span className="flex items-center gap-2 text-sm text-white font-medium">
-                        Watch replay
-                        <ArrowRight className="size-4 transform group-hover:translate-x-1 transition-transform" />
+                      <span className="flex items-center gap-2 text-sm text-white font-medium px-2 py-1 bg-black/30 rounded-full">
+                        {useCase.category}
                       </span>
-                    </a>
+                    </div>
                   </div>
                 </div>
               </div>

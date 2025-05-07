@@ -1,11 +1,7 @@
 "use client"
 
-import { siteConfig } from "@/lib/home";
-import { ArrowRight, Github, X, AlertCircle } from "lucide-react";
-import { FlickeringGrid } from "@/components/home/ui/flickering-grid";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { useState, useEffect, useRef, FormEvent } from "react";
-import { useScroll } from "motion/react";
+import { ArrowRight, AlertCircle } from "lucide-react";
+import { useState, useEffect, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
@@ -37,13 +33,7 @@ const BlurredDialogOverlay = () => (
 const PENDING_PROMPT_KEY = 'pendingAgentPrompt';
 
 export function HeroSection() {
-  const { hero } = siteConfig;
-  const tablet = useMediaQuery("(max-width: 1024px)");
-  const [mounted, setMounted] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
-  const { scrollY } = useScroll();
   const [inputValue, setInputValue] = useState("");
   const router = useRouter();
   const { user, isLoading } = useAuth();
@@ -55,33 +45,7 @@ export function HeroSection() {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Detect when scrolling is active to reduce animation complexity
-  useEffect(() => {
-    const unsubscribe = scrollY.on("change", () => {
-      setIsScrolling(true);
-
-      // Clear any existing timeout
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
-      }
-
-      // Set a new timeout
-      scrollTimeout.current = setTimeout(() => {
-        setIsScrolling(false);
-      }, 300); // Wait 300ms after scroll stops
-    });
-
-    return () => {
-      unsubscribe();
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
-      }
-    };
-  }, [scrollY]);
+  // Removed unused effects
 
   // Store the input value when auth dialog opens
   useEffect(() => {
@@ -188,17 +152,11 @@ export function HeroSection() {
   };
 
   // Handle auth form submission
-  const handleSignIn = async (prevState: any, formData: FormData) => {
+  const handleSignIn = async (_prevState: any, formData: FormData) => {
     setAuthError(null);
     try {
-      // Implement sign in logic here
-      const email = formData.get("email") as string;
-      const password = formData.get("password") as string;
-
       // Add the returnUrl to the form data for proper redirection
       formData.append("returnUrl", "/dashboard");
-
-      // Call your authentication function here
 
       // Return any error state
       return { message: "Invalid credentials" };
@@ -212,50 +170,8 @@ export function HeroSection() {
   return (
     <section id="hero" className="w-full relative overflow-hidden">
       <div className="relative flex flex-col items-center w-full px-6">
-        {/* Left side flickering grid with gradient fades */}
-        <div className="absolute left-0 top-0 h-[600px] md:h-[800px] w-1/3 -z-10 overflow-hidden">
-          {/* Horizontal fade from left to right */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-background z-10" />
-
-          {/* Vertical fade from top */}
-          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background via-background/90 to-transparent z-10" />
-
-          {/* Vertical fade to bottom */}
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background via-background/90 to-transparent z-10" />
-
-          <FlickeringGrid
-            className="h-full w-full"
-            squareSize={mounted && tablet ? 2 : 2.5}
-            gridGap={mounted && tablet ? 2 : 2.5}
-            color="var(--secondary)"
-            maxOpacity={0.4}
-            flickerChance={isScrolling ? 0.01 : 0.03} // Low flickering when not scrolling
-          />
-        </div>
-
-        {/* Right side flickering grid with gradient fades */}
-        <div className="absolute right-0 top-0 h-[600px] md:h-[800px] w-1/3 -z-10 overflow-hidden">
-          {/* Horizontal fade from right to left */}
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-background z-10" />
-
-          {/* Vertical fade from top */}
-          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background via-background/90 to-transparent z-10" />
-
-          {/* Vertical fade to bottom */}
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background via-background/90 to-transparent z-10" />
-
-          <FlickeringGrid
-            className="h-full w-full"
-            squareSize={mounted && tablet ? 2 : 2.5}
-            gridGap={mounted && tablet ? 2 : 2.5}
-            color="var(--secondary)"
-            maxOpacity={0.4}
-            flickerChance={isScrolling ? 0.01 : 0.03} // Low flickering when not scrolling
-          />
-        </div>
-
-        {/* Center content background with rounded bottom */}
-        <div className="absolute inset-x-1/4 top-0 h-[600px] md:h-[800px] -z-20 bg-background rounded-b-xl"></div>
+        {/* Clean background without animated squares */}
+        <div className="absolute inset-0 -z-10 bg-background"></div>
 
         <div className="relative z-10 pt-32 max-w-3xl mx-auto h-full w-full flex flex-col gap-10 items-center justify-center">
                     {/* <p className="border border-border bg-accent rounded-full text-sm h-8 px-3 flex items-center gap-2">
@@ -264,13 +180,12 @@ export function HeroSection() {
           </p> */}
 
           <Link
-            href="https://github.com/orchestraconnect/repo"
+            href="https://orchestraconnect.fr"
             target="_blank"
             rel="noopener noreferrer"
             className="group border border-border/50 bg-background hover:bg-accent/20 hover:border-secondary/40 rounded-full text-sm h-8 px-3 flex items-center gap-2 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105 hover:-translate-y-0.5"
           >
-            {hero.badgeIcon}
-            <span className="font-medium text-muted-foreground text-xs tracking-wide group-hover:text-primary transition-colors duration-300">{hero.badge}</span>
+            <span className="font-medium text-muted-foreground text-xs tracking-wide group-hover:text-primary transition-colors duration-300">Découvrir Orchestra Connect</span>
             <span className="inline-flex items-center justify-center size-3.5 rounded-full bg-muted/30 group-hover:bg-secondary/30 transition-colors duration-300">
               <svg width="8" height="8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-muted-foreground group-hover:text-primary">
                 <path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -279,10 +194,10 @@ export function HeroSection() {
           </Link>
           <div className="flex flex-col items-center justify-center gap-5">
             <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium tracking-tighter text-balance text-center">
-              <span className="text-secondary">Orchestra Connect</span><span className="text-primary">, your AI Employee.</span>
+              <span className="text-primary">Orchestra</span><span>, votre conciergerie B2B</span>
             </h1>
             <p className="text-base md:text-lg text-center text-muted-foreground font-medium text-balance leading-relaxed tracking-tight">
-              {hero.description}
+              Votre assistant IA dédié qui simplifie le quotidien de votre entreprise. Gagnez du temps et optimisez vos ressources grâce à notre service de conciergerie intelligent.
             </p>
           </div>
           <div className="flex items-center w-full max-w-xl gap-2 flex-wrap justify-center">
@@ -295,9 +210,10 @@ export function HeroSection() {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder={hero.inputPlaceholder}
+                    placeholder="Quelle tâche puis-je accomplir pour vous aujourd'hui?"
                     className="flex-1 h-12 md:h-14 rounded-full px-2 bg-transparent focus:outline-none text-sm md:text-base py-2"
                     disabled={isSubmitting}
+                    spellCheck={false}
                   />
                   <button
                     type="submit"
